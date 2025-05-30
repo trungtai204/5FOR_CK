@@ -1,20 +1,25 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native';
+import Calculator from './src/components/Calculator';
+import { useCalculator } from './src/hooks/useCalculator';
+import { useTheme } from './src/hooks/useTheme';
+import { getStyles } from './src/styles/AppStyles';
 
 export default function App() {
+  const calculatorState = useCalculator();
+  const themeState = useTheme();
+
+  const styles = getStyles(themeState.darkMode, calculatorState.orientation);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style={themeState.darkMode ? "light" : "dark"} />
+      <Calculator
+        calculatorState={calculatorState}
+        themeState={themeState}
+        styles={styles}
+      />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
