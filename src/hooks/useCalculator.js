@@ -154,6 +154,10 @@ export const useCalculator = () => {
   };
 
   const performOperation = (nextOperation) => {
+    // Nếu vừa nhấn toán tử mà lại nhấn tiếp toán tử, bỏ qua
+    if (waitingForOperand) {
+      return;
+    }
     const inputValue = parseFloat(display);
 
     if (previousValue === null) {

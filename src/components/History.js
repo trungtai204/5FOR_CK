@@ -78,12 +78,18 @@ const History = ({ history, styles, onDelete, onEdit }) => {
                   const first = parseFloat(match[1]);
                   const operator = match[2];
                   const second = parseFloat(match[3]);
+                  // Không cho nhập nhiều dấu toán tử liên tiếp (đã kiểm tra bằng regex)
+                  // Kiểm tra chia cho 0
+                  if ((operator === '÷' || operator === '/') && second === 0) {
+                    Alert.alert('Lỗi', 'Không thể chia cho 0!');
+                    return;
+                  }
                   const result = calculate(first, second, operator);
                   const newEntry = createHistoryEntry(first, operator, second, result);
                   onEdit(editIndex, newEntry);
                   setEditIndex(null);
                 } else {
-                  Alert.alert('Lỗi', 'Vui lòng nhập đúng định dạng: số phép toán số (VD: 9 + 5)');
+                  Alert.alert('Lỗi', 'Vui lòng nhập đúng định dạng: số phép toán số (VD: 9 + 5) và không nhập nhiều dấu toán tử liên tiếp!');
                 }
               }}
             />
