@@ -1,40 +1,13 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, Alert } from 'react-native';
-import * as ScreenOrientation from 'expo-screen-orientation';
+import React from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
 
 /**
- * Component Header chứa nút toggle theme và thông tin shake
+ * Component Header chỉ chứa nút toggle theme và nút lịch sử
  * @param {object} themeState - State của theme
  * @param {object} styles - Styles object
+ * @param {function} onShowHistory - Hàm mở lịch sử
  */
-const Header = ({ themeState, styles }) => {
-  const [isLocked, setIsLocked] = useState(false);
-
-  const showShakeInfo = () => {
-    Alert.alert(
-      'Shake Detection', 
-      'Lắc điện thoại để xóa màn hình calculator!\n\nShake your phone to clear the calculator!',
-      [{ text: 'OK', style: 'default' }]
-    );
-  };
-
-  const toggleRotationLock = async () => {
-    try {
-      if (isLocked) {
-        // Mở khóa xoay màn hình
-        await ScreenOrientation.unlockAsync();
-        setIsLocked(false);
-      } else {
-        // Khóa xoay màn hình ở hướng hiện tại
-        const currentOrientation = await ScreenOrientation.getOrientationAsync();
-        await ScreenOrientation.lockAsync(currentOrientation);
-        setIsLocked(true);
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Không thể thay đổi chế độ xoay màn hình');
-    }
-  };
-
+const Header = ({ themeState, styles, onShowHistory }) => {
   return (
     <View style={styles.header}>
       <TouchableOpacity 
@@ -48,18 +21,9 @@ const Header = ({ themeState, styles }) => {
 
       <TouchableOpacity
         style={styles.historyButton}
-        onPress={showShakeInfo}
+        onPress={onShowHistory}
       >
-        <Text style={styles.historyButtonText}>📱 Shake Info</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.historyButton}
-        onPress={toggleRotationLock}
-      >
-        <Text style={styles.historyButtonText}>
-          {isLocked ? '🔒 Unlock' : '🔓 Lock'} Rotation
-        </Text>
+        <Text style={styles.historyButtonText}>🕑 Lịch sử</Text>
       </TouchableOpacity>
     </View>
   );
