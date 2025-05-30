@@ -13,7 +13,7 @@ const Display = ({ display, expression, styles }) => {
       {/* Hiển thị biểu thức */}
       {expression && (
         <Text
-          style={styles.expression}
+          style={[styles.expression, { fontSize: 24, marginBottom: 8 }]}
           numberOfLines={2}
           adjustsFontSizeToFit
         >
@@ -23,7 +23,7 @@ const Display = ({ display, expression, styles }) => {
 
       {/* Hiển thị kết quả */}
       <Text
-        style={styles.display}
+        style={[styles.display, { fontSize: 48, fontWeight: 'bold' }]}
         numberOfLines={1}
         adjustsFontSizeToFit
       >

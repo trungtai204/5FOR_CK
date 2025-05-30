@@ -21,89 +21,27 @@ const ButtonGrid = ({ calculatorState, styles, isScientific, setIsScientific }) 
   } = calculatorState;
 
   // Hàm xử lý cho các phép toán khoa học
-  const handleSquare = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.pow(value, 2));
-  };
-  const handleSqrt = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.sqrt(value));
-  };
-  const handleCube = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.pow(value, 3));
-  };
-  const handlePowerY = () => {
-    // Đặt phép toán chờ nhập số mũ tiếp theo
-    calculatorState.performOperation('^');
-  };
-  const handleCubeRoot = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.cbrt(value));
-  };
-  const handleYRoot = () => {
-    // Đặt phép toán chờ nhập số mũ tiếp theo
-    calculatorState.performOperation('yroot');
-  };
-  const handleInverse = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(1 / value);
-  };
-  const handleFactorial = () => {
-    const value = parseInt(calculatorState.display);
-    let res = 1;
-    for (let i = 2; i <= value; i++) res *= i;
-    calculatorState.inputUnaryResult(res);
-  };
-  const handleExp = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.exp(value));
-  };
-  const handleTenPow = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.pow(10, value));
-  };
-  const handleSin = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.sin(value));
-  };
-  const handleCos = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.cos(value));
-  };
-  const handleTan = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.tan(value));
-  };
-  const handleSinh = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.sinh(value));
-  };
-  const handleCosh = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.cosh(value));
-  };
-  const handleTanh = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.tanh(value));
-  };
-  const handleLn = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.log(value));
-  };
-  const handleLog = () => {
-    const value = parseFloat(calculatorState.display);
-    calculatorState.inputUnaryResult(Math.log10(value));
-  };
-  const handlePi = () => {
-    calculatorState.inputUnaryResult(Math.PI);
-  };
-  const handleE = () => {
-    calculatorState.inputUnaryResult(Math.E);
-  };
-  const handleRand = () => {
-    calculatorState.inputUnaryResult(Math.random());
-  };
+  const handleSquare = () => calculatorState.inputUnaryResult('square');
+  const handleSqrt = () => calculatorState.inputUnaryResult('sqrt');
+  const handleCube = () => calculatorState.inputUnaryResult('cube');
+  const handlePowerY = () => calculatorState.performOperation('^');
+  const handleCubeRoot = () => calculatorState.inputUnaryResult('cbrt');
+  const handleYRoot = () => calculatorState.performOperation('yroot');
+  const handleInverse = () => calculatorState.inputUnaryResult('inverse');
+  const handleFactorial = () => calculatorState.inputUnaryResult('factorial');
+  const handleExp = () => calculatorState.inputUnaryResult('exp');
+  const handleTenPow = () => calculatorState.inputUnaryResult('tenpow');
+  const handleSin = () => calculatorState.inputUnaryResult('sin');
+  const handleCos = () => calculatorState.inputUnaryResult('cos');
+  const handleTan = () => calculatorState.inputUnaryResult('tan');
+  const handleSinh = () => calculatorState.inputUnaryResult('sinh');
+  const handleCosh = () => calculatorState.inputUnaryResult('cosh');
+  const handleTanh = () => calculatorState.inputUnaryResult('tanh');
+  const handleLn = () => calculatorState.inputUnaryResult('ln');
+  const handleLog = () => calculatorState.inputUnaryResult('log');
+  const handlePi = () => calculatorState.inputUnaryResult('pi');
+  const handleE = () => calculatorState.inputUnaryResult('e');
+  const handleRand = () => calculatorState.inputUnaryResult('rand');
   // Đơn giản: Deg/Rad chỉ là placeholder, bạn có thể mở rộng thêm state nếu muốn
   const handleDegRad = () => {
     // Chưa xử lý chuyển đổi mode, chỉ là placeholder

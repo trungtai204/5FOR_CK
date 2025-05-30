@@ -27,6 +27,9 @@ export const useCalculator = () => {
   const [screenWidth, setScreenWidth] = useState(screenData.width);
   const [screenHeight, setScreenHeight] = useState(screenData.height);
 
+  // Pending unary operation state
+  const [pendingUnaryOp, setPendingUnaryOp] = useState(null);
+
   // Handle orientation changes
   useEffect(() => {
     const onChange = (result) => {
@@ -75,6 +78,13 @@ export const useCalculator = () => {
 
   // Calculator functions
   const inputNumber = (num) => {
+    if (pendingUnaryOp) {
+      // Nếu đang chờ số cho phép toán khoa học
+      setDisplay(display === '0' ? String(num) : display + num);
+      setExpression(`${pendingUnaryOp}(${display === '0' ? String(num) : display + num}`);
+      setWaitingForOperand(false);
+      return;
+    }
     if (waitingForOperand) {
       setDisplay(String(num));
       setWaitingForOperand(false);
@@ -84,25 +94,20 @@ export const useCalculator = () => {
 
     // Cập nhật expression
     if (waitingForOperand) {
-      // Nếu đang chờ operand, thay thế expression với số mới
       const parts = expression.split(' ');
       if (parts.length >= 3) {
-        // Có dạng "số operator "
         setExpression(parts[0] + ' ' + parts[1] + ' ' + String(num));
       } else {
         setExpression(String(num));
       }
     } else {
-      // Nếu không chờ operand, cập nhật số hiện tại
       if (expression === '' || expression.includes('=')) {
         setExpression(String(num));
       } else {
         const parts = expression.split(' ');
         if (parts.length === 1) {
-          // Chỉ có số
           setExpression(display === '0' ? String(num) : display + num);
         } else if (parts.length === 3) {
-          // Có dạng "số operator số"
           const newNumber = display === '0' ? String(num) : display + num;
           setExpression(parts[0] + ' ' + parts[1] + ' ' + newNumber);
         }
@@ -111,6 +116,12 @@ export const useCalculator = () => {
   };
 
   const inputDecimal = () => {
+    if (pendingUnaryOp) {
+      setDisplay(display.includes('.') ? display : display + '.');
+      setExpression(`${pendingUnaryOp}(${display.includes('.') ? display : display + '.'}`);
+      setWaitingForOperand(false);
+      return;
+    }
     if (waitingForOperand) {
       setDisplay('0.');
       setWaitingForOperand(false);
@@ -203,7 +214,7 @@ export const useCalculator = () => {
       const historyEntry = createHistoryEntry(currentValue, operation, inputValue, newValue);
       setHistory(prev => [historyEntry, ...prev.slice(0, 9)]); // Keep last 10 calculations
 
-      setDisplay(String(newValue));
+      // Chỉ cập nhật expression, không hiển thị kết quả
       setExpression(String(newValue) + ' ' + nextOperation);
       setPreviousValue(newValue);
     }
@@ -213,6 +224,48 @@ export const useCalculator = () => {
   };
 
   const handleEquals = () => {
+    if (pendingUnaryOp) {
+      const value = parseFloat(display);
+      let result = null;
+      switch (pendingUnaryOp) {
+        case 'sin': result = Math.sin(value); break;
+        case 'cos': result = Math.cos(value); break;
+        case 'tan': result = Math.tan(value); break;
+        case 'sinh': result = Math.sinh(value); break;
+        case 'cosh': result = Math.cosh(value); break;
+        case 'tanh': result = Math.tanh(value); break;
+        case 'ln': result = Math.log(value); break;
+        case 'log': result = Math.log10(value); break;
+        case 'sqrt': result = Math.sqrt(value); break;
+        case 'cbrt': result = Math.cbrt(value); break;
+        case 'square': result = Math.pow(value, 2); break;
+        case 'cube': result = Math.pow(value, 3); break;
+        case 'inverse': result = 1 / value; break;
+        case 'factorial': {
+          let res = 1;
+          for (let i = 2; i <= value; i++) res *= i;
+          result = res;
+          break;
+        }
+        case 'exp': result = Math.exp(value); break;
+        case 'tenpow': result = Math.pow(10, value); break;
+        case 'pi': result = Math.PI; break;
+        case 'e': result = Math.E; break;
+        case 'rand': result = Math.random(); break;
+        default: result = value;
+      }
+      setDisplay(String(result));
+      setExpression(`${pendingUnaryOp}(${value})`); // chỉ phép tính, không có dấu =
+      // Lưu lịch sử
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('vi-VN', {
+        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+      });
+      setHistory(prev => [`[${dateStr}] ${pendingUnaryOp}(${value}) = ${result}`, ...prev.slice(0, 9)]);
+      setPendingUnaryOp(null);
+      setWaitingForOperand(true);
+      return;
+    }
     const inputValue = parseFloat(display);
 
     if (previousValue !== null && operation) {
@@ -236,8 +289,8 @@ export const useCalculator = () => {
       const historyEntry = createHistoryEntry(previousValue, operation, inputValue, newValue);
       setHistory(prev => [historyEntry, ...prev.slice(0, 9)]);
 
+      // Hiển thị kết quả khi nhấn dấu bằng
       setDisplay(String(newValue));
-      // Chỉ hiển thị phép tính, không có ngày giờ
       setExpression(`${previousValue} ${operation} ${inputValue} = ${newValue}`);
       setPreviousValue(null);
       setOperation(null);
@@ -295,10 +348,11 @@ export const useCalculator = () => {
   };
 
   // Hàm cho phép toán một ngôi: set kết quả và chờ nhập số mới
-  const inputUnaryResult = (result) => {
-    setDisplay(String(result));
-    setWaitingForOperand(true);
-    setExpression(String(result));
+  const inputUnaryResult = (op) => {
+    setPendingUnaryOp(op);
+    setDisplay('0');
+    setExpression(`${op}(`);
+    setWaitingForOperand(false);
   };
 
   return {
@@ -310,6 +364,7 @@ export const useCalculator = () => {
     screenWidth,
     screenHeight,
     gyroData,
+    pendingUnaryOp,
 
     // Functions
     inputNumber,
