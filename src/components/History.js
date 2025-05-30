@@ -17,28 +17,46 @@ const History = ({ history, styles, onDelete, onEdit }) => {
     return null;
   }
 
+  const renderHistoryItem = (item, index) => {
+    // Tách ngày tháng và phép tính
+    const match = item.match(/\[(.*?)\]\s*(.*)$/);
+    if (!match) return null;
+
+    let [dateTime, calculation] = [match[1], match[2]];
+    // Lấy phần ngày tháng (bỏ giờ nếu có)
+    // dateTime có thể là "11:59 30/05/2025" hoặc chỉ "30/05/2025"
+    let dateOnly = dateTime;
+    const dateMatch = dateTime.match(/(\d{2}\/\d{2}\/\d{4})$/);
+    if (dateMatch) {
+      dateOnly = dateMatch[1];
+    }
+
+    return (
+      <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => {
+            setEditIndex(index);
+            // Lấy phần biểu thức trước dấu = nếu có
+            const expr = calculation.split('=')[0].trim();
+            setEditValue(expr);
+          }}
+        >
+          <Text style={[styles.historyItem, { fontSize: 12, opacity: 0.7 }]}>{dateOnly}</Text>
+          <Text style={styles.historyItem}>{calculation}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onDelete(index)}>
+          <Text style={{ color: 'red', marginLeft: 8 }}>X</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.historyContainer}>
       <Text style={styles.historyTitle}>Lịch sử / History:</Text>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {history.map((item, index) => (
-          <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity
-              style={{ flex: 1 }}
-              onPress={() => {
-                setEditIndex(index);
-                // Lấy phần biểu thức trước dấu = nếu có
-                const expr = item.split('=')[0].trim();
-                setEditValue(expr);
-              }}
-            >
-              <Text style={styles.historyItem}>{item}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => onDelete(index)}>
-              <Text style={{ color: 'red', marginLeft: 8 }}>X</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+        {history.map(renderHistoryItem)}
       </ScrollView>
       {/* Modal sửa */}
       <Modal visible={editIndex !== null} transparent animationType="slide">

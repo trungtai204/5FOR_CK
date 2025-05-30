@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 /**
  * Component Button tái sử dụng cho các nút calculator
@@ -10,6 +11,32 @@ import { TouchableOpacity, Text } from 'react-native';
  * @param {object} customStyle - Style tùy chỉnh thêm
  */
 const Button = ({ title, onPress, type = 'number', styles, customStyle = {} }) => {
+  const handlePress = async () => {
+    try {
+      // Thêm phản hồi rung khác nhau tùy theo loại nút
+      switch (type) {
+        case 'number':
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          break;
+        case 'operator':
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          break;
+        case 'clear':
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          break;
+        case 'equals':
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          break;
+        default:
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+      onPress();
+    } catch (error) {
+      // Nếu có lỗi với haptic feedback, vẫn thực hiện onPress
+      onPress();
+    }
+  };
+
   const getButtonStyle = () => {
     const baseStyle = [styles.button];
     
@@ -63,7 +90,8 @@ const Button = ({ title, onPress, type = 'number', styles, customStyle = {} }) =
   return (
     <TouchableOpacity
       style={getButtonStyle()}
-      onPress={onPress}
+      onPress={handlePress}
+      activeOpacity={0.7}
     >
       <Text style={getTextStyle()}>
         {title}

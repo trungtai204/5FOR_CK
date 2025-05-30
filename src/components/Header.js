@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, Alert } from 'react-native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 /**
  * Component Header chứa nút toggle theme và thông tin shake
@@ -7,12 +8,31 @@ import { View, TouchableOpacity, Text, Alert } from 'react-native';
  * @param {object} styles - Styles object
  */
 const Header = ({ themeState, styles }) => {
+  const [isLocked, setIsLocked] = useState(false);
+
   const showShakeInfo = () => {
     Alert.alert(
       'Shake Detection', 
       'Lắc điện thoại để xóa màn hình calculator!\n\nShake your phone to clear the calculator!',
       [{ text: 'OK', style: 'default' }]
     );
+  };
+
+  const toggleRotationLock = async () => {
+    try {
+      if (isLocked) {
+        // Mở khóa xoay màn hình
+        await ScreenOrientation.unlockAsync();
+        setIsLocked(false);
+      } else {
+        // Khóa xoay màn hình ở hướng hiện tại
+        const currentOrientation = await ScreenOrientation.getOrientationAsync();
+        await ScreenOrientation.lockAsync(currentOrientation);
+        setIsLocked(true);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Không thể thay đổi chế độ xoay màn hình');
+    }
   };
 
   return (
@@ -31,6 +51,15 @@ const Header = ({ themeState, styles }) => {
         onPress={showShakeInfo}
       >
         <Text style={styles.historyButtonText}>📱 Shake Info</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.historyButton}
+        onPress={toggleRotationLock}
+      >
+        <Text style={styles.historyButtonText}>
+          {isLocked ? '🔒 Unlock' : '🔓 Lock'} Rotation
+        </Text>
       </TouchableOpacity>
     </View>
   );

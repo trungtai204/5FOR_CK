@@ -58,5 +58,13 @@ export const formatNumber = (number) => {
  * @returns {string} - Chuỗi lịch sử
  */
 export const createHistoryEntry = (firstValue, operation, secondValue, result) => {
-  return `${formatNumber(firstValue)} ${operation} ${formatNumber(secondValue)} = ${formatNumber(result)}`;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  return `[${dateStr}] ${formatNumber(firstValue)} ${operation} ${formatNumber(secondValue)} = ${formatNumber(result)}`;
 };

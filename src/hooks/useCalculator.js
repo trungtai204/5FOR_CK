@@ -202,7 +202,8 @@ export const useCalculator = () => {
       setHistory(prev => [historyEntry, ...prev.slice(0, 9)]);
 
       setDisplay(String(newValue));
-      setExpression(createHistoryEntry(previousValue, operation, inputValue, newValue));
+      // Chỉ hiển thị phép tính, không có ngày giờ
+      setExpression(`${previousValue} ${operation} ${inputValue} = ${newValue}`);
       setPreviousValue(null);
       setOperation(null);
       setWaitingForOperand(true);
