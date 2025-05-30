@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, TextInput, Button, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput, Button, Alert } from 'react-native';
 import { calculate, createHistoryEntry } from '../utils/calculatorUtils';
 
 /**
@@ -24,7 +24,6 @@ const History = ({ history, styles, onDelete, onEdit }) => {
 
     let [dateTime, calculation] = [match[1], match[2]];
     // Lấy phần ngày tháng (bỏ giờ nếu có)
-    // dateTime có thể là "11:59 30/05/2025" hoặc chỉ "30/05/2025"
     let dateOnly = dateTime;
     const dateMatch = dateTime.match(/(\d{2}\/\d{2}\/\d{4})$/);
     if (dateMatch) {
@@ -55,9 +54,10 @@ const History = ({ history, styles, onDelete, onEdit }) => {
   return (
     <View style={styles.historyContainer}>
       <Text style={styles.historyTitle}>Lịch sử / History:</Text>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {/* Hiển thị toàn bộ lịch sử, không cuộn */}
+      <View>
         {history.map(renderHistoryItem)}
-      </ScrollView>
+      </View>
       {/* Modal sửa */}
       <Modal visible={editIndex !== null} transparent animationType="slide">
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#00000099' }}>
