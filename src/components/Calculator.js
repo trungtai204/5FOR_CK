@@ -14,6 +14,7 @@ import Button from './Button';
  */
 const Calculator = ({ calculatorState, themeState, styles }) => {
   const [showHistory, setShowHistory] = useState(false);
+  const [isScientific, setIsScientific] = useState(false);
 
   return (
     <View style={{ flex: 1 }}>
@@ -35,6 +36,8 @@ const Calculator = ({ calculatorState, themeState, styles }) => {
       <ButtonGrid
         calculatorState={calculatorState}
         styles={styles}
+        isScientific={isScientific}
+        setIsScientific={setIsScientific}
       />
 
       {/* Lịch sử tính toán dưới dạng Modal */}

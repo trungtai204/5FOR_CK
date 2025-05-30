@@ -160,6 +160,23 @@ export const useCalculator = () => {
     }
     const inputValue = parseFloat(display);
 
+    // Xử lý lũy thừa xʸ
+    if (nextOperation === '^') {
+      setPreviousValue(inputValue);
+      setOperation('^');
+      setWaitingForOperand(true);
+      setExpression(display + ' ^');
+      return;
+    }
+    // Xử lý căn bậc y: ʸ√x
+    if (nextOperation === 'yroot') {
+      setPreviousValue(inputValue);
+      setOperation('yroot');
+      setWaitingForOperand(true);
+      setExpression(display + ' yroot');
+      return;
+    }
+
     if (previousValue === null) {
       setPreviousValue(inputValue);
       setExpression(display + ' ' + nextOperation);
@@ -173,7 +190,14 @@ export const useCalculator = () => {
         return;
       }
 
-      const newValue = calculate(currentValue, inputValue, operation);
+      let newValue;
+      if (operation === '^') {
+        newValue = Math.pow(currentValue, inputValue);
+      } else if (operation === 'yroot') {
+        newValue = Math.pow(currentValue, 1 / inputValue);
+      } else {
+        newValue = calculate(currentValue, inputValue, operation);
+      }
 
       // Add to history
       const historyEntry = createHistoryEntry(currentValue, operation, inputValue, newValue);
@@ -199,7 +223,14 @@ export const useCalculator = () => {
         return;
       }
 
-      const newValue = calculate(previousValue, inputValue, operation);
+      let newValue;
+      if (operation === '^') {
+        newValue = Math.pow(previousValue, inputValue);
+      } else if (operation === 'yroot') {
+        newValue = Math.pow(previousValue, 1 / inputValue);
+      } else {
+        newValue = calculate(previousValue, inputValue, operation);
+      }
 
       // Add to history
       const historyEntry = createHistoryEntry(previousValue, operation, inputValue, newValue);
@@ -263,6 +294,13 @@ export const useCalculator = () => {
     setHistory(prev => prev.map((item, i) => i === index ? newEntry : item));
   };
 
+  // Hàm cho phép toán một ngôi: set kết quả và chờ nhập số mới
+  const inputUnaryResult = (result) => {
+    setDisplay(String(result));
+    setWaitingForOperand(true);
+    setExpression(String(result));
+  };
+
   return {
     // State
     display,
@@ -283,5 +321,6 @@ export const useCalculator = () => {
     calculatePercentage,
     deleteHistoryEntry,
     editHistoryEntry,
+    inputUnaryResult,
   };
 };
